@@ -33,7 +33,6 @@ renderer3.setSize(200,200)
 renderer4.setSize(200,200)
 
 new OrbitControls(camera1, renderer1.domElement)
-new OrbitControls(camera2, renderer2.domElement)
 
 const camera = new THREE.PerspectiveCamera(
   75,
