@@ -34,6 +34,17 @@ const cubeFolder = GUIConfig.addFolder('Cube')
 
 const cubeZRotationController = cubeFolder.add(cube.rotation, 'z', 0, 1)
 
+const cubePositionFolder = cubeFolder.addFolder('Position')
+cubePositionFolder.add(cube.position, 'x', -10, 10, 0.1)
+cubePositionFolder.add(cube.position, 'y', -10, 10, 0.1)
+cubePositionFolder.add(cube.position, 'z', -10, 10, 0.1)
+cubeFolder.open()
+cubePositionFolder.open()
+const cubeScaleFolder = cubeFolder.addFolder('Scale')
+cubeScaleFolder.add(cube.scale, 'x', -5, 5)
+cubeScaleFolder.add(cube.scale, 'y', -5, 5)
+cubeScaleFolder.add(cube.scale, 'z', -5, 5)
+
 cubeFolder.open()
 const settings = { animateXRotation: false, animateYRotation: false}
 const isXanimated = cubeFolder.add(settings, 'animateXRotation').onChange((v) => !v)
