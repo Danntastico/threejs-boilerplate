@@ -1,72 +1,71 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Stats from 'three/examples/jsm/libs/stats.module'
-import { GUI } from 'dat.gui'
+import { MainCamera, MainRenderer, MainScene } from './assets'
+import { GUIConfig } from './config/gui'
 
-const scene = new THREE.Scene()
+function generateCube(
+  color: THREE.ColorRepresentation | undefined, 
+  wireframe:boolean, 
+  hasAxis: boolean){
+  const geometry = new THREE.BoxGeometry()
+  const material = new THREE.MeshBasicMaterial({
+    color,
+    wireframe
+  })
+  const cube = new THREE.Mesh(geometry, material)
+  if(hasAxis){
+    const cubeAxis = new THREE.AxesHelper()
+    cube.add(cubeAxis)
+  }
 
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-)
+  return cube
+}
 
-camera.position.z = 2
+const cube = generateCube(0x00ff00, true, true)
+MainScene.add(cube)
 
-const renderer = new THREE.WebGLRenderer()
-renderer.setSize(window.innerWidth, window.innerHeight)
-document.body.appendChild(renderer.domElement)
-
-const geometry = new THREE.BoxGeometry()
-const material = new THREE.MeshBasicMaterial({
-  color: 0x00ff00,
-  wireframe: true
-})
-
-const cube = new THREE.Mesh(geometry, material)
-scene.add(cube)
-
-window.addEventListener('resize', onWindowResize, false)
-const control = new OrbitControls(camera, renderer.domElement)
-control.addEventListener('change', render)
+new OrbitControls(MainCamera, MainRenderer.domElement)
 
 const stats = Stats()
 document.body.appendChild(stats.dom)
 
-const gui = new GUI()
-const cubeFolder = gui.addFolder('Cube')
+const cubeFolder = GUIConfig.addFolder('Cube')
 
-cubeFolder.add(cube.rotation, 'x', 0, Math.PI * 2)
-cubeFolder.add(cube.rotation, 'y', 0, Math.PI * 2)
-cubeFolder.add(cube.rotation, 'z', 0, Math.PI * 2)
+const cubeZRotationController = cubeFolder.add(cube.rotation, 'z', 0, 1)
 
 cubeFolder.open()
-
-const cameraFolder = gui.addFolder('Camera')
-cameraFolder.add(camera.position, 'z', 0, 10)
-
-cameraFolder.open()
+const settings = { animateXRotation: false, animateYRotation: false}
+const isXanimated = cubeFolder.add(settings, 'animateXRotation').onChange((v) => !v)
+const isYanimated = cubeFolder.add(settings, 'animateYRotation').onChange((v) => !v)
 
 function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight
-  camera.updateProjectionMatrix()
-  renderer.setSize(window.innerWidth, window.innerHeight)
+  MainCamera.aspect = window.innerWidth / window.innerHeight
+  MainCamera.updateProjectionMatrix()
+  MainRenderer.setSize(window.innerWidth, window.innerHeight)
   render()
 }
 
 function animate(){
   requestAnimationFrame(animate)
-  cube.rotation.x += 0.01
-  cube.rotation.y += 0.01
+
+  if(isXanimated.getValue()){
+    cube.rotation.x += 0.01
+  }
+  if(isYanimated.getValue()){
+    cube.rotation.y += 0.01
+  }
 
   render()
   
   stats.update()
+  
 }
 
 function render(){
-  renderer.render(scene, camera)
+  MainRenderer.render(MainScene, MainCamera)
 }
+
+window.addEventListener('resize', onWindowResize, false)
 
 animate()
