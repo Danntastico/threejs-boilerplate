@@ -13,7 +13,8 @@ function generateCube(
     color,
     wireframe
   })
-  const cube = new THREE.Mesh(geometry, material)
+  const phongMaterial = new THREE.MeshPhongMaterial()
+  const cube = new THREE.Mesh(geometry, phongMaterial)
   if(hasAxis){
     const cubeAxis = new THREE.AxesHelper()
     cube.add(cubeAxis)
@@ -23,9 +24,14 @@ function generateCube(
 }
 
 const cube = generateCube(0x00ff00, true, true)
+const mainLight = new THREE.PointLight(0xff0000, 1, 100)
+mainLight.position.set(5, 10, 10)
+MainScene.add(mainLight)
+cube.position.set(0,0.5,0)
+
 MainScene.add(cube)
 
-new OrbitControls(MainCamera, MainRenderer.domElement)
+const controls = new OrbitControls(MainCamera, MainRenderer.domElement)
 
 const stats = Stats()
 document.body.appendChild(stats.dom)
@@ -66,7 +72,9 @@ function animate(){
   if(isYanimated.getValue()){
     cube.rotation.y += 0.01
   }
-
+  const cubeWorldPosition = new THREE.Vector3()
+  cube.getWorldPosition(cubeWorldPosition)
+  console.table(cubeWorldPosition)
   render()
   
   stats.update()
