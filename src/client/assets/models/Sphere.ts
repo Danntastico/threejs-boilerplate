@@ -1,3 +1,4 @@
+import { GUI } from 'dat.gui'
 import * as THREE from 'three'
 
 interface SpherePamaters {
@@ -6,11 +7,37 @@ interface SpherePamaters {
   hasAxis: boolean
 }
 
+interface SphereData {
+  radius: number
+  widthSegments: number
+  heightSegments: number
+  phiStart: number
+  phiLength: number
+  thetaStart: number
+  thetaLength: number
+}
+
+type ReducerObj = { action: string, payload: any}
+
+const DEFAULT_SPHEREDATA = {
+  radius: 1,
+  widthSegments: 8,
+  heightSegments: 6,
+  phiStart: 0,
+  phiLength: Math.PI * 2,
+  thetaStart: 0,
+  thetaLength: Math.PI
+}
+
 class Sphere implements SpherePamaters {
   color: THREE.ColorRepresentation | undefined
   wireframe: boolean
   hasAxis: boolean
+  radius: number
+  heightSegments: number
+  widthSegments: number
   sphere: THREE.Mesh<THREE.SphereGeometry, THREE.MeshPhongMaterial>
+
   constructor (
     radius: number,
     widthSegments: number, 
@@ -22,8 +49,10 @@ class Sphere implements SpherePamaters {
     this.color = color
     this.hasAxis = hasAxis
     this.wireframe = wireframe
-
-    this.sphere = this._initializeGeometry()
+    this.radius = radius
+    this.widthSegments = widthSegments
+    this.heightSegments = heightSegments
+    this.sphere = this._initializeGeometry(this.radius, this.widthSegments, this.heightSegments)
   }
 
   private _initializeGeometry(radius = 1, widthSegments: number, heightSegments: number) {
@@ -44,12 +73,35 @@ class Sphere implements SpherePamaters {
     return sphere
   }
 
-  public setCubePosition(x:number, y: number, z: number) {
+  public setGeometryPosition(x:number, y: number, z: number) {
     this.sphere.position.set(x,y,z)
   }
+
   public getMesh(){
     return this.sphere
   }
+
+  public setupGUIFolder(gui: GUI){
+    const shapeFolder = gui.addFolder('Sphere')
+    const properties = shapeFolder.addFolder('Properties')
+    const shapeData = { ... DEFAULT_SPHEREDATA }
+    properties.add(shapeData, 'width', 1, 30, 0.5).onChange(() => this.regenerateSphereGeometry())
+  }
+
+  private regenerateSphereGeometry(data: SphereData, reducerObj: ReducerObj) {
+    const { action, payload} = reducerObj
+    const newGeometry = new THREE.SphereGeometry(
+      radius,
+      widthSegments,
+      heightSegments,
+      phiStart,
+      phiLength,
+      thetaStart,
+      thetaLength
+    )
+    this.sphere.geometry.dispose()
+    this.sphere.geometry = newGeometry
+  }
 }
 
-export default new Sphere(0x00ff00, false, false).getMesh()
+export default new Sphere(0.5, 10, 10, 0x00ff00, false, false).getMesh()

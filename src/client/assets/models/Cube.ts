@@ -1,11 +1,12 @@
 import * as THREE from 'three'
-
+import { GUI } from 'dat.gui'
 interface CubeParameters {
   color: THREE.ColorRepresentation | undefined
   wireframe: boolean
   hasAxis: boolean
 }
 
+const ROTATION_STEP_PARAMS = [0, 2 * Math.PI, 0.01]
 class Cube implements CubeParameters {
   color: THREE.ColorRepresentation | undefined
   wireframe: boolean
@@ -45,6 +46,29 @@ class Cube implements CubeParameters {
   public getMesh(){
     return this.cube
   }
+
+  public setupGUIFolder(gui: GUI){
+    const shapeFolder = gui.addFolder('Cube')
+
+    const rotationFolder = shapeFolder.addFolder('Rotation')
+    const positionFolder = shapeFolder.addFolder('Position')
+    const scaleFolder = shapeFolder.addFolder('Scale')
+    
+    rotationFolder.add(this.cube.rotation, 'x', ...ROTATION_STEP_PARAMS)
+    rotationFolder.add(this.cube.rotation, 'y', ...ROTATION_STEP_PARAMS)
+    rotationFolder.add(this.cube.rotation, 'z', ...ROTATION_STEP_PARAMS)
+
+    positionFolder.add(this.cube.position, 'x', -10, 10, 0.5)
+    positionFolder.add(this.cube.position, 'y', -10, 10, 0.5)
+    positionFolder.add(this.cube.position, 'z', -10, 10, 0.5)
+
+    scaleFolder.add(this.cube.scale, 'x', -5, 5, 0.1)
+    scaleFolder.add(this.cube.scale, 'y', -5, 5, 0.1)
+    scaleFolder.add(this.cube.scale, 'z', -5, 5, 0.1)
+
+    shapeFolder.add(this.cube, 'visible', true)
+    shapeFolder.open() 
+  }
 }
 
-export default new Cube(0x00ff00, false, false).getMesh()
+export default Cube
