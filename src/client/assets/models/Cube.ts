@@ -67,7 +67,7 @@ class Cube implements CubeParameters {
     scaleFolder.add(this.cube.scale, 'z', -5, 5, 0.1)
 
     shapeFolder.add(this.cube, 'visible', true)
-    shapeFolder.open() 
+    shapeFolder.open()
   }
 }
 

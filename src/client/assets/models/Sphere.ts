@@ -68,8 +68,6 @@ class Sphere implements SpherePamaters {
       const sphereAxis = new THREE.AxesHelper()
       sphere.add(sphereAxis)
     }
-
-    console.log(sphere.geometry)
     return sphere
   }
 
@@ -85,11 +83,19 @@ class Sphere implements SpherePamaters {
     const shapeFolder = gui.addFolder('Sphere')
     const properties = shapeFolder.addFolder('Properties')
     const shapeData = { ... DEFAULT_SPHEREDATA }
-    properties.add(shapeData, 'width', 1, 30, 0.5).onChange(() => this.regenerateSphereGeometry())
+    properties.add(shapeData, 'width', 1, 30, 0.5).onChange(() => this.regenerateSphereGeometry(shapeData))
   }
 
-  private regenerateSphereGeometry(data: SphereData, reducerObj: ReducerObj) {
-    const { action, payload} = reducerObj
+  private regenerateSphereGeometry(data: SphereData, reducerObj: ReducerObj | {}  = {}) {
+    const {
+      radius,
+      widthSegments,
+      heightSegments,
+      phiStart,
+      phiLength,
+      thetaStart,
+      thetaLength
+    } = data
     const newGeometry = new THREE.SphereGeometry(
       radius,
       widthSegments,
@@ -104,4 +110,4 @@ class Sphere implements SpherePamaters {
   }
 }
 
-export default new Sphere(0.5, 10, 10, 0x00ff00, false, false).getMesh()
+export default Sphere
