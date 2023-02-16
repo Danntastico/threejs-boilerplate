@@ -1,6 +1,5 @@
-import {GUI} from 'dat.gui'
-import * as THREE from 'three'
+import { GUI } from 'dat.gui'
 
 const gui = new GUI()
 
-export { gui as GUIConfig}
+export { gui as GUIConfig }
