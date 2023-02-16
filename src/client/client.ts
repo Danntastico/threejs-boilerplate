@@ -1,11 +1,13 @@
 import {
-  initializeMainCamera, 
-  initializeRenderer, 
+  initializeMainCamera,
+  initializeRenderer,
   initializeScene,
   initializeStats
 } from './assets/scene'
 import { GUI } from 'dat.gui'
 import { Cube, Sphere } from './assets/models'
+import { addToScene } from '../basic_examples/01-BufferGeometry'
+import addMaterialsToScene from '../basic_examples/02-Materials'
 
 const canvas = document.body
 
@@ -29,11 +31,11 @@ function onWindowResize() {
   render()
 }
 
-function render(){
+function render() {
   renderer.render(scene, camera)
 }
 
-function main(){
+function main() {
   requestAnimationFrame(main)
   render()
 
@@ -46,8 +48,8 @@ cube.getMesh().position.set(2, 0.5, 0)
 cube.setupGUIFolder(gui)
 sphere.getMesh().position.set(-2, 0.5, 0)
 
-scene.add(cube.getMesh())
-scene.add(sphere.getMesh())
+//addToScene(scene)
+addMaterialsToScene(scene, gui)
 
 canvas.appendChild(renderer.domElement)
 window.addEventListener('resize', onWindowResize, false)
