@@ -1,19 +1,22 @@
+import { GUI } from 'dat.gui'
 import {
-  DoubleSide,
-  Color,
-  WebGLRenderer,
-  Scene,
-  GridHelper,
-  AxesHelper,
-  PointLight,
-  PointLightHelper,
-  PerspectiveCamera,
   AmbientLight,
-  PlaneGeometry,
-  MeshBasicMaterial,
+  AxesHelper,
+  Color,
+  DoubleSide,
+  Fog,
+  FogExp2,
+  GridHelper,
   MathUtils,
   Mesh,
-  MeshPhongMaterial
+  MeshBasicMaterial,
+  MeshPhongMaterial,
+  PerspectiveCamera,
+  PlaneGeometry,
+  PointLight,
+  PointLightHelper,
+  Scene,
+  WebGLRenderer,
 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Stats from 'three/examples/jsm/libs/stats.module'
@@ -26,7 +29,6 @@ function initializeScene() {
 
   const mainScene = new Scene()
   const grid = new GridHelper(30, 30)
-
   const planeGeometry = new PlaneGeometry(10, 10)
   const material = new MeshPhongMaterial({ color: 0xffff00 })
   const plane = new Mesh(planeGeometry, material)
@@ -96,9 +98,43 @@ function initializeStats(canvas: HTMLElement) {
   return stats
 }
 
+function setupGUIFolder(gui: GUI, scene: THREE.Scene) {
+  const sceneFolder = gui.addFolder('Scene')
+  const fog = new FogExp2(0x142b39, 0.15);
+  const data = {
+    fog: {
+      'THREE.Fog()': false,
+      'fog.color': fog.color.getHex(),
+      'fog.density': fog.density
+    }
+  };
+  console.log(fog.density)
+  sceneFolder.add(data.fog, 'THREE.Fog()').onChange(useFog => useFog ? scene.fog = fog : scene.fog = null)
+  sceneFolder.add(data.fog, 'fog.density', 0, 0.5, 0.01).onChange(value => {
+    fog.density = value
+    if (data.fog['THREE.Fog()']) scene.fog = fog
+  })
+  sceneFolder.addColor(data.fog, 'fog.color').onChange(handleColorChange(fog.color))
+}
+
+
+function handleColorChange(color: THREE.Color, converSRGBToLinear = false) {
+  return function (value: unknown) {
+    if (typeof value === 'string') {
+      value = value.replace('#', '0x');
+    }
+
+    color.setHex(value as number);
+    if (converSRGBToLinear === true) color.convertSRGBToLinear();
+  };
+
+}
+
+
 export {
   initializeMainCamera,
   initializeRenderer,
   initializeScene,
-  initializeStats
+  initializeStats,
+  setupGUIFolder
 }

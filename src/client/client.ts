@@ -2,7 +2,8 @@ import {
   initializeMainCamera,
   initializeRenderer,
   initializeScene,
-  initializeStats
+  initializeStats,
+  setupGUIFolder
 } from './assets/scene'
 import { GUI } from 'dat.gui'
 import { Cube, Sphere } from './assets/models'
@@ -47,7 +48,7 @@ const gui = new GUI()
 cube.getMesh().position.set(2, 0.5, 0)
 cube.setupGUIFolder(gui)
 sphere.getMesh().position.set(-2, 0.5, 0)
-
+setupGUIFolder(gui, scene)
 //addToScene(scene)
 addMaterialsToScene(scene, gui)
 
