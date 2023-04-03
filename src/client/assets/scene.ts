@@ -108,7 +108,7 @@ function setupGUIFolder(gui: GUI, scene: THREE.Scene) {
       'fog.density': fog.density
     }
   };
-  console.log(fog.density)
+
   sceneFolder.add(data.fog, 'THREE.Fog()').onChange(useFog => useFog ? scene.fog = fog : scene.fog = null)
   sceneFolder.add(data.fog, 'fog.density', 0, 0.5, 0.01).onChange(value => {
     fog.density = value
